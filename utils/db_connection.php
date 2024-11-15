@@ -11,7 +11,7 @@ class DbConnection
     private const DB_HOST = "localhost";
 
     private string $username = "root";
-    private string $password = "root";
+    private string $password = "";
     
     private PDO|null $connection = null;
 
