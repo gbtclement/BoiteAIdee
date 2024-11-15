@@ -3,13 +3,14 @@
 use Models\Idea;
 use Utils\DbConnection;
 
-include('header.php');
+include 'header.php';
 
 $titre = null;
 $message = null;
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $titre = filter_input(INPUT_POST, "titre");
     $message = filter_input(INPUT_POST, "message");
+    
     $db = new DbConnection();
     $connection = $db->getConnection();
     Idea::create($connection, $_SESSION["user_id"], $titre, $message);
