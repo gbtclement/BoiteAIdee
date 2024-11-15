@@ -7,19 +7,45 @@
 </head>
 <body>
 
-    <h1>Bienvenue sur ma page PHP</h1>
+    <form method="POST">
+        <label for="username">Nom d'utilisateur :</label>
+        <input type="text" name="username" id="username" required>
+        <button type="submit">Comparer</button>
+    </form>
 
     <?php
-        // Définir une variable en PHP
-        $message = "Bonjour, ceci est un message dynamique généré par PHP !";
+        include('../utils/db_connection-test.php');
 
-        // Afficher le message
-        echo "<p>$message</p>";
+        use Utils\DbConnection;
+        
+        // Créer une instance de connexion et se connecter
+        $db = new DbConnection();
+        if ($db->connect()) {
+            echo "<h1>Bienvenue</h1>";
+            echo "<h2>Liste des idées</h2>";
+
+            if ($_SERVER("REQUEST_METHOD") == "post") {
+
+                $inputUsername = $_POST['username'];
+                $stmt = $db->getConnection()->prepare("SELECT nom FROM utilisateurs WHERE nom = :username");
+                $stmt->bindParam(':username', $inputUsername, PDO::PARAM_STR);
+                $stmt->execute();
+                
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                if (!empty($result)) {
+                    echo "utilisateur trouvé !";
+                }else{
+                    echo "cette utilisateur n'existe pas !";
+                }
+            }
+
+            // Déconnexion
+            $db->disconnect();
+        } else {
+            echo "<p>Erreur de connexion à la base de données.</p>";
+        }
+
     ?>
-
-    <footer>
-        <p>Copyright © <?php echo date("Y"); ?> - Mon Site Web</p>
-    </footer>
 
 </body>
 </html>

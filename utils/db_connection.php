@@ -7,9 +7,8 @@ use PDO;
 class DbConnection
 {
 	private const DB_SERVICE = "mysql";
-	private const DB_NAME = "boite_a_idee";
+	private const DB_NAME = "boiteaidee";
 	private const DB_HOST = "localhost";
-	private const DB_PORT = "3306";
 
 	private string $username = "root";
 	private string $password = "root";
