@@ -13,6 +13,7 @@ class IdeaModel extends Model
 		$this->id;
 	}
 
-	
+
 }
+echo "HAAAAAAAAAAA";
 
