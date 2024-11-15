@@ -16,7 +16,7 @@ class User extends Model
 	
 
 	public function setId(int $id): void {
-		$this->id;
+		$this->id = $id;
 	}
 	public function setName(string $name): void {
 		$this->name = $name;

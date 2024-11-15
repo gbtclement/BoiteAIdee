@@ -23,6 +23,10 @@ class DbConnection
 	public function getPassword(): string {
 		return $this->password;
 	}
+	
+	public function getConnection(): PDO {
+		return $this->connection;
+	}
 
 	private static function getDNS(): string {
 		return self::DB_SERVICE.":dbname=".self::DB_NAME.";host=".self::DB_HOST.";port=".self::DB_PORT;
