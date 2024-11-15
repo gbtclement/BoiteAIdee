@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('header.php');
-include('../utils/db_connection_test_clement.php');
+include('../utils/db_connection.php');
 
 use Utils\DbConnection;
 

@@ -152,15 +152,15 @@ class Idea extends Model
 		return Idea::getById($connection, $id);
 	}
 
-	function insert(): bool {
+	function insert(PDO &$conncetion): bool {
 		return false;
 	}
 
-	function update(): bool {
+	function update(PDO &$conncetion): bool {
 		return false;
 	}
 
-	function delete(): bool {
+	function delete(PDO &$conncetion): bool {
 		return false;
 	}
 }
