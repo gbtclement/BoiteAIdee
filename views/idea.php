@@ -10,8 +10,10 @@ $message = null;
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $titre = filter_input(INPUT_POST, "titre");
     $message = filter_input(INPUT_POST, "message");
-    $dbconnection= new DbConnection();
-    Idea::create($dbconnection->getConnection(), $_SESSION["user_id"], $titre, $message);
+    $db = new DbConnection();
+    $connection = $db->getConnection();
+    Idea::create($connection, $_SESSION["user_id"], $titre, $message);
+    $db->disconnect();
 }
 ?>
 <!-- Contenu principal de la page d'accueil ici -->
