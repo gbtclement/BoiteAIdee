@@ -4,7 +4,6 @@ namespace Models;
 
 class Idea extends Model
 {
-	const TABLE_NAME = "idees";
 	private $user_id;
 	private $User;
 	private $title;
