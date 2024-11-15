@@ -21,7 +21,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="idea.php">Créer une idée</a>
             <?php else: ?>
-                <a href="connexion.php">Connexion</a>
+                <a href="authPage.php">Connexion</a>
             <?php endif; ?>
         </nav>
     </header>
