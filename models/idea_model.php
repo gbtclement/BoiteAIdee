@@ -48,4 +48,5 @@ class Idea extends Model
 	public function setDateCreation(string $creation_date): void {
 		$this->creation_date = $creation_date;
 	}
+
 }

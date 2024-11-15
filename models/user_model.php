@@ -8,6 +8,7 @@ use PDOException;
 class User extends Model
 {
 	private string $name;
+
 	public function getId(): int {
 		return $this->id;
 	}
@@ -52,8 +53,8 @@ class User extends Model
 
 		foreach ($req->fetchAll() as $utilisateur) {
 			$User = new User();
-			$User = $utilisateur["id"];
-			$User = $utilisateur["name"];
+			$User->setId($utilisateur["id"]);
+			$User->setName($utilisateur["name"]);
 			array_push($users, $User);
 		}
 
@@ -123,15 +124,15 @@ class User extends Model
 		return User::getById($connection, $id);
 	}
 
-	function insert(): bool {
+	public function insert(PDO &$connection): bool {
 		return false;
 	}
 
-	function update(): bool {
+	public function update(PDO &$connection): bool {
 		return false;
 	}
 
-	function delete(): bool {
+	public function delete(PDO &$connection): bool {
 		return false;
 	}
 }
