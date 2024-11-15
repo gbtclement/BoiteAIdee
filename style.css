@@ -1,0 +1,125 @@
+/* ----------> All <---------- */
+:root {
+    --background-white: #f4f4f9;
+    --background-light-gray: lightgray;
+
+    --hn-color: #333;
+
+    --a-p-size: 20px;
+    --h1-size: 20px;
+    --h2-size: 20px;
+    --h3-size: 20px;
+}
+
+input,
+textarea,
+button {
+    outline: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: var(--background-white);
+    color: var(--hn-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+    margin: 100px 70px;
+    position: relative;
+}
+
+/* ----------> header.php <---------- */
+
+header{
+    background-color: #333;
+    color: #fff;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+header nav a {
+    color: #fff;
+    margin: 0 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-bottom: none;
+}
+
+header nav a:hover{
+    border-bottom: 2px solid #fff;
+}
+
+/* ----------> footer.php <---------- */
+
+footer{
+    background-color: #333;
+    color: #fff;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+footer p {
+    color: #fff;
+    margin: 0 15px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* ----------> accueil.php <---------- */
+
+.accueil .form_thumbs form button{
+    background-color: var(--background-light-gray);
+    outline: none;
+    border: none;
+}
+
+.accueil .form_thumbs form .down i{
+    content: url(uploads/down.svg);
+    width: 30px;
+    height: auto;
+}
+
+.accueil .form_thumbs form .up i{
+    content: url(uploads/up.svg);
+    width: 30px;
+    height: auto;
+}
+
+.accueil .form_thumbs form i:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.accueil .form_thumbs form button{
+    margin-top: 15px;
+}
+
+.accueil .form_thumbs form{
+    display: flex;
+    justify-content: space-between;
+}
+
+.accueil ul{
+    width: fit-content;
+    list-style: none;
+    background-color: var(--background-light-gray);
+    padding: 20px;
+    border-radius: 5px;
+}
