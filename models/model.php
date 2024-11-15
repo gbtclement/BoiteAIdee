@@ -7,7 +7,11 @@ abstract class Model
 	protected const TABLE_NAME = "abstract";
 	protected int $id;
 
+	public function getId(): int {
+		return $this->id;
+	}
 
-	abstract public function getId(): int;
-	abstract public function setId(int $id);
+	public function setId(int $id): void {
+		$this->id;
+	}
 }
