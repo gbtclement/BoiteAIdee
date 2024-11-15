@@ -1,0 +1,132 @@
+<?php
+/*
+namespace Models;
+
+use PDO;
+use PDOException;
+
+class Vote
+{
+	private int $user_id;
+	private int $idea_id;
+	private string $vote;
+	private string $creation_date;
+
+	public int $user_id {
+
+	}
+	public function getIdeaId(int $idea_id): int {
+
+	}
+	public function getVote (string $vote): string {
+
+	}
+	public function getCreation_date(string $creation_date): string {
+
+	}
+
+
+        static function getAll(PDO &$connection) : array|null {
+		$req = $connection->prepare("
+			SELECT * FROM utilisateurs
+		");
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$users = [];
+
+		foreach ($req->fetchAll() as $utilisateur) {
+			$User = new User();
+			$User = $utilisateur["id"];
+			$User = $utilisateur["name"];
+			array_push($users, $User);
+		}
+
+		return $users;
+	}
+
+	static function getById(PDO &$connection, int $id): User|null {
+		$req = $connection->prepare("
+			SELECT * FROM utilisateurs WHERE utilisateurs.id = :id
+		");
+
+		$req->bindValue("id", $id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$user = $req->fetch();
+
+		$User = new User();
+		$User->setId($user["id"]);
+		$User->setName($user["name"]);
+
+		return $User;
+	}
+
+	/**
+	 * Insère un utilisateur et le retourne en tant qu'objet
+	 * @param \PDO $connection la connection pdo
+	 * @param string $name le nom de l'utilisateur
+	 * @return \Models\User|null retourne l'utilisateur créer ou null si la création est un echec
+	 *//*
+	static function create(PDO &$connection, string $name): User|null {
+		$req = $connection->prepare("
+			INSERT INTO utilisateurs (nom) VALUES (:name)
+		");
+
+		$req->bindValue("name", $name, PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete (name = $name), error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$id = $connection->lastInsertId();
+
+		if ($id == false) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		return User::getById($connection, $id);
+	}
+
+	function insert(): bool {
+		return false;
+	}
+
+	function update(): bool {
+		return false;
+	}
+
+	function delete(): bool {
+		return false;
+	}
+}
