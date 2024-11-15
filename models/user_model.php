@@ -89,6 +89,34 @@ class User extends Model
 		return $User;
 	}
 
+	static function getByName(PDO &$connection, string $name): User|null {
+		$req = $connection->prepare("
+			SELECT * FROM utilisateurs WHERE utilisateurs.name = :name
+		");
+
+		$req->bindValue("name", $name, PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$user = $req->fetch();
+
+		$User = new User();
+		$User->setId($user["id"]);
+		$User->setName($user["name"]);
+
+		return $User;
+	}
+
 	/**
 	 * Insère un utilisateur et le retourne en tant qu'objet
 	 * @param \PDO $connection la connection pdo
