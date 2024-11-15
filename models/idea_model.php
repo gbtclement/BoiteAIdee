@@ -50,4 +50,3 @@ class Idea extends Model
 		$this->creation_date = $creation_date;
 	}
 }
-
