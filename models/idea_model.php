@@ -34,7 +34,7 @@ class Idea extends Model
 	
 
 	public function setId(int $id): void {
-		$this->id;
+		$this->id = $id;
 	}
 	public function setUtilisateur_id(int $user_id): void {
 		$this->user_id = $user_id;
@@ -55,7 +55,7 @@ class Idea extends Model
 	
 	static function getAll(PDO &$connection) : array|null {
 		$req = $connection->prepare("
-			SELECT * FROM utilisateurs
+			SELECT * FROM idees
 		");
 
 		$result = false;
@@ -70,21 +70,23 @@ class Idea extends Model
 			return null;
 		}
 
-		$users = [];
+		$ideas = [];
 
-		foreach ($req->fetchAll() as $utilisateur) {
-			$User = new User();
-			$User = $utilisateur["id"];
-			$User = $utilisateur["name"];
-			array_push($users, $User);
+		foreach ($req->fetchAll() as $idee) {
+			$Idea = new Idea();
+			$Idea->setId($idee["id"]);
+			$Idea->setUtilisateur_id($idee["user_id"]);
+			$Idea->setTitre($idee["title"]);
+			$Idea->setDescription($idee["description"]);
+			array_push($ideas, $Idea);
 		}
 
-		return $users;
+		return $ideas;
 	}
 
-	static function getById(PDO &$connection, int $id): User|null {
+	static function getById(PDO &$connection, int $id): Idea|null {
 		$req = $connection->prepare("
-			SELECT * FROM utilisateurs WHERE utilisateurs.id = :id
+			SELECT * FROM idees WHERE idees.id = :id
 		");
 
 		$req->bindValue("id", $id, PDO::PARAM_INT);
@@ -101,13 +103,15 @@ class Idea extends Model
 			return null;
 		}
 
-		$user = $req->fetch();
+		$idea = $req->fetch();
 
-		$User = new User();
-		$User->setId($user["id"]);
-		$User->setName($user["name"]);
+		$Idea = new Idea();
+		$Idea->setId($idea["id"]);
+		$Idea->setUtilisateur_id($idea["user_id"]);
+		$Idea->setTitre($idea["title"]);
+		$Idea->setDescription($idea["description"]);
 
-		return $User;
+		return $Idea;
 	}
 
 	/**
