@@ -1,10 +1,17 @@
-<?php include('../includes/header.php'); ?>
 <?php
+
+use Models\Idea;
+use Utils\DbConnection;
+
+include('includes/header.php');
+
 $titre = null;
 $message = null;
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     $titre = filter_input(INPUT_POST, "titre");
     $message = filter_input(INPUT_POST, "message");
+    $dbconnection= new DbConnection();
+    Idea::create($dbconnection->getConnection(), $_SESSION["user_id"], $titre, $message);
 }
 ?>
 <!-- Contenu principal de la page d'accueil ici -->
@@ -48,4 +55,4 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     </body>
 </html>
 
-<?php include('../includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>

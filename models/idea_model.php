@@ -78,6 +78,7 @@ class Idea extends Model
 			$Idea->setUtilisateur_id($idee["user_id"]);
 			$Idea->setTitre($idee["title"]);
 			$Idea->setDescription($idee["description"]);
+			$Idea->setDateCreation($idee["creation_date"]);
 			array_push($ideas, $Idea);
 		}
 
@@ -110,7 +111,7 @@ class Idea extends Model
 		$Idea->setUtilisateur_id($idea["user_id"]);
 		$Idea->setTitre($idea["title"]);
 		$Idea->setDescription($idea["description"]);
-
+		$Idea->setDateCreation($idea["creation_date"]);
 		return $Idea;
 	}
 
@@ -120,18 +121,20 @@ class Idea extends Model
 	 * @param string $name le nom de l'utilisateur
 	 * @return \Models\Idea|null retourne l'idea créer ou null si la création est un echec
 	 */
-	static function create(PDO &$connection, string $name): Idea|null {
+	static function create(PDO &$connection, int $user_id, string $title, string $description): Idea|null {
 		$req = $connection->prepare("
-			INSERT INTO utilisateurs (nom) VALUES (:name)
-		");
+			INSERT INTO idees (utilisateur_id, titre, description) VALUES (:user_id, :title, :description)");
 
-		$req->bindValue("name", $name, PDO::PARAM_STR);
+		$req->bindValue("user_id", $user_id, PDO::PARAM_INT);
+		$req->bindValue("title", $title, PDO::PARAM_STR);
+		$req->bindValue("description", $description, PDO::PARAM_STR);
 
 		$result = false;
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
-			echo htmlentities("une erreur est arrivée lors de la requete (name = $name), error : \n<br> $e");
+			echo htmlentities("une erreur est arrivée lors de la requete (user_id = $user_id,
+			description = $description, title = $title), error : \n<br> $e");
 		}
 
 		if (!$result) {
