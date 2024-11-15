@@ -1,27 +1,42 @@
 <?php 
 include('header.php');
-include('../utils/db_connection.php');
+include('../utils/db_connection_test_clement.php');
 
-// Préparation et exécution de la requête SQL
-//$stmt = $???->prepare("SELECT titre, description FROM idees");
-//$stmt->execute();
-//$result = $stmt->get_result();
+use Utils\DbConnection;
 
-echo "<h1>Bienvenue</h1>";
-echo "<h2>Liste des idées</h2>";
+// Créer une instance de connexion et se connecter
+$db = new DbConnection();
+if ($db->connect()) {
+    echo "<h1>Bienvenue</h1>";
+    echo "<h2>Liste des idées</h2>";
 
-// Affichage des idées
-if ($result->num_rows > 0) {
-    echo "<ul>";
-    while ($row = $result->fetch_assoc()) {
-        echo "<li>";
-        echo "<strong>" . htmlspecialchars($row['titre']) . "</strong><br>";
-        echo htmlspecialchars($row['description']);
-        echo "</li>";
+    // Préparer et exécuter la requête
+    $stmt = $db->getConnection()->prepare("SELECT titre, description FROM idees");
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Vérifier et afficher les résultats
+    if (!empty($result)) {
+        echo "<ul>";
+        foreach ($result as $row) {
+            echo "<li>";
+            echo "<strong>" . htmlspecialchars($row['titre']) . "</strong><br>";
+            echo htmlspecialchars($row['description']);
+            echo "</li>";
+            echo "<div class='flex'>";
+            echo "<i></i>";
+            echo "<i></i>";
+            echo "</div>";
+        }
+        echo "</ul>";
+    } else {
+        echo "<p>Aucune idée trouvée.</p>";
     }
-    echo "</ul>";
+
+    // Déconnexion
+    $db->disconnect();
 } else {
-    echo "<p>Aucune idée trouvée.</p>";
+    echo "<p>Erreur de connexion à la base de données.</p>";
 }
 
 include('footer.php'); 
