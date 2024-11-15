@@ -51,9 +51,15 @@ class DbConnection
 	function __construct(string|null $username = null, string|null $password = null) {
 		$this->username ??= $username;
 		$this->password ??= $password;
+
+		$this->connect();
 	}
 
 	public function connect(): bool {
+		if ($this->isConnected()) {
+			return true;
+		}
+
 		try {
 			$this->connection = new PDO($this->getDNS(), $this->username, $this->password);
 			return $this->isConnected();
