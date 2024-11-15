@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <header>
         <nav>
             <a href="index.php">Accueil</a>
-            <?php if (isset($_SESSION['utilisateur_id'])): ?>
+            <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="idea.php">Créer une idée</a>
             <?php else: ?>
                 <a href="connexion.php">Connexion</a>

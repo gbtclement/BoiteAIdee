@@ -1,13 +1,7 @@
 /* ----------> All <---------- */
 :root {
     --background-white: #f4f4f9;
-    --background-light-gray: red;
-
-    --button-color: red;
-    --button-color-hover: red;
-
-    --a-color: red;
-    --a-color-hover: red;
+    --background-light-gray: lightgray;
 
     --hn-color: #333;
 
@@ -86,4 +80,46 @@ footer p {
     margin: 0 15px;
     font-size: 1rem;
     font-weight: bold;
+}
+
+/* ----------> accueil.php <---------- */
+
+.accueil .form_thumbs form button{
+    background-color: var(--background-light-gray);
+    outline: none;
+    border: none;
+}
+
+.accueil .form_thumbs form .down i{
+    content: url(uploads/down.svg);
+    width: 30px;
+    height: auto;
+}
+
+.accueil .form_thumbs form .up i{
+    content: url(uploads/up.svg);
+    width: 30px;
+    height: auto;
+}
+
+.accueil .form_thumbs form i:hover {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.accueil .form_thumbs form button{
+    margin-top: 15px;
+}
+
+.accueil .form_thumbs form{
+    display: flex;
+    justify-content: space-between;
+}
+
+.accueil ul{
+    width: fit-content;
+    list-style: none;
+    background-color: var(--background-light-gray);
+    padding: 20px;
+    border-radius: 5px;
 }
