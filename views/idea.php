@@ -3,7 +3,7 @@
 use Models\Idea;
 use Utils\DbConnection;
 
-include('includes/header.php');
+include('header.php');
 
 $titre = null;
 $message = null;
@@ -55,4 +55,4 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     </body>
 </html>
 
-<?php include('includes/footer.php'); ?>
+<?php include('footer.php'); ?>
