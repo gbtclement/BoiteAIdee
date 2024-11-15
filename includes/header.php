@@ -7,16 +7,22 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Boite à idées</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header>
         <nav>
-            <ul>
-            </ul>
+            <a href="index.php">Accueil</a>
+            <?php if (isset($_SESSION['utilisateur_id'])): ?>
+                <a href="idea.php">Créer une idée</a>
+            <?php else: ?>
+                <a href="connexion.php">Connexion</a>
+            <?php endif; ?>
         </nav>
     </header>
     <div class="content">
