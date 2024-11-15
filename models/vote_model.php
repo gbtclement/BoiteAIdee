@@ -12,7 +12,7 @@ class Vote extends Model
 	private int $idea_id;
 	private Idea $Idea;
 	private bool $vote;
-	private string $creation_date;
+	private string $date_vote;
 
 #region getters
 	public function getId (): int {
@@ -39,8 +39,8 @@ class Vote extends Model
 		return $this->vote;
 	}
 	
-	public function getCreation_date(): string {
-		return $this->creation_date;
+	public function getDateVote(): string {
+		return $this->date_vote;
 	}
 
 #endregion
@@ -71,8 +71,8 @@ class Vote extends Model
 		$this->vote = $vote;
 	}
 	
-	public function setCreation_date(string $creation_date): void {
-		$this->creation_date = $creation_date;
+	public function setDateVote(string $date_vote): void {
+		$this->date_vote = $date_vote;
 	}
 
 #endregion
@@ -103,8 +103,11 @@ class Vote extends Model
 
 		foreach ($req->fetchAll() as $vote) {
 			$Vote = new Vote();
-			$Vote->setIdeaId($vote["id"]);
-			$Vote->setUserId($vote["name"]);
+			$Vote->setId($vote["id"]);
+			$Vote->setUserId($vote["utilisateur_id"]);
+			$Vote->setIdeaId($vote["idee_id"]);
+			$Vote->setVote($vote["vote"]);
+			$Vote->setDateVote($vote["date_creation"]);
 			array_push($votes, $Vote);
 		}
 
@@ -140,10 +143,10 @@ class Vote extends Model
 
 		$Vote = new Vote();
 		$Vote->setId($vote["id"]);
-		$Vote->setUserId($vote["user_id"]);
-		$Vote->setIdeaId($vote["idea_id"]);
+		$Vote->setUserId($vote["utilisateur_id"]);
+		$Vote->setIdeaId($vote["idee_id"]);
 		$Vote->setVote($vote["vote"]);
-		$Vote->setCreation_date($vote["date_creation"]);
+		$Vote->setDateVote($vote["date_creation"]);
 
 		return $Vote;
 	}
@@ -153,24 +156,23 @@ class Vote extends Model
 	 * @param \PDO $connection la connection pdo
 	 * @param string $user_id id de l'utilisateur votant
 	 * @param string $idea_id id de l'idée votée
+	 * @param bool $vote true si le vote est pour, false s'il est contre
 	 * @return \Models\Vote|null retourne le vote créé ou null en cas d'echec
 	 */
-	static function create(PDO &$connection, int $user_id, int $idea_id, bool $vote, string $creation_date): Vote|null {
+	static function create(PDO &$connection, int $user_id, int $idea_id, bool $vote): Vote|null {
 		$req = $connection->prepare("
-			INSERT INTO votes (user_id, idea_id, vote, date_creation) VALUES (:user_id, :idea_id, :vote, :creation_date)
+			INSERT INTO votes (utilisateur_id, idee_id, vote) VALUES (:user_id, :idea_id, :vote)
 		");
 
 		$req->bindValue("user_id", $user_id, PDO::PARAM_STR);
 		$req->bindValue("idea_id", $idea_id, PDO::PARAM_STR);
 		$req->bindValue("vote", $vote, PDO::PARAM_STR);
-		$req->bindValue("date_creation", $creation_date, PDO::PARAM_STR);
-
 		$result = false;
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete 
-			(user_id = $user_id, idea_id = $idea_id, vote = $vote, date_creation = $creation_date), error : \n<br> $e");
+			(user_id = $user_id, idea_id = $idea_id, vote = $vote), error : \n<br> $e");
 		}
 
 		if (!$result) {
