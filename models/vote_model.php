@@ -151,6 +151,107 @@ class Vote extends Model
 		return $Vote;
 	}
 
+	static function getByUserId(PDO &$connection, int $user_id): array|null {
+		$req = $connection->prepare("
+			SELECT * FROM votes WHERE votes.utilisateur_id = :user_id
+		");
+
+		$req->bindValue("user_id", $user_id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$votes = [];
+
+		foreach ($req->fetchAll() as $vote) {
+			$Vote = new Vote();
+			$Vote->setId($vote["id"]);
+			$Vote->setUserId($vote["utilisateur_id"]);
+			$Vote->setIdeaId($vote["idee_id"]);
+			$Vote->setVote($vote["vote"]);
+			$Vote->setDateVote($vote["date_creation"]);
+			array_push($votes, $Vote);
+		}
+
+		return $votes;
+	}
+
+	static function getByIdeaId(PDO &$connection, int $idea_id): array|null {
+		$req = $connection->prepare("
+			SELECT * FROM votes WHERE votes.idee_id = :idea_id
+		");
+
+		$req->bindValue("idea_id", $idea_id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$votes = [];
+
+		foreach ($req->fetchAll() as $vote) {
+			$Vote = new Vote();
+			$Vote->setId($vote["id"]);
+			$Vote->setUserId($vote["utilisateur_id"]);
+			$Vote->setIdeaId($vote["idee_id"]);
+			$Vote->setVote($vote["vote"]);
+			$Vote->setDateVote($vote["date_creation"]);
+			array_push($votes, $Vote);
+		}
+
+		return $votes;
+	}
+
+	static function getByIdeaIdAndUserId(PDO &$connection, int $user_id, int $idea_id): Vote|null {
+		$req = $connection->prepare("
+			SELECT * FROM votes WHERE votes.user_id = :user_id AND votes.idee_id = :idea_id
+		");
+
+		$req->bindValue("user_id", $user_id, PDO::PARAM_INT);
+		$req->bindValue("idea_id", $idea_id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete 
+			(user_id = $user_id, idea_id = $idea_id), error : \n<br> $e");
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$vote = $req->fetch();
+
+		$Vote = new Vote();
+		$Vote->setId($vote["id"]);
+		$Vote->setUserId($vote["utilisateur_id"]);
+		$Vote->setIdeaId($vote["idee_id"]);
+		$Vote->setVote($vote["vote"]);
+		$Vote->setDateVote($vote["date_creation"]);
+		return $Vote;
+	}
+
+
 	/**
 	 * Insère un utilisateur et le retourne en tant qu'objet
 	 * @param \PDO $connection la connection pdo
