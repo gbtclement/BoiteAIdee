@@ -106,7 +106,7 @@ class Idea extends Model
 			return null;
 		}
 
-		$idea = $req->fetch();
+		$idea = $req->fetch(PDO::FETCH_ASSOC);
 
 		$Idea = new Idea();
 		$Idea->setId($idea["id"]);

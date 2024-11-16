@@ -80,7 +80,7 @@ class User extends Model
 			return null;
 		}
 
-		$user = $req->fetch();
+		$user = $req->fetch(PDO::FETCH_ASSOC);
 
 		$User = new User();
 		$User->setId($user["id"]);
@@ -109,7 +109,7 @@ class User extends Model
 			return null;
 		}
 
-		$user = $req->fetch();
+		$user = $req->fetch(PDO::FETCH_ASSOC);
 
 		$User = new User();
 		$User->setId($user["id"]);
