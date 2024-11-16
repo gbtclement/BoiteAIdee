@@ -141,7 +141,7 @@ class Vote extends Model
 			return null;
 		}
 
-		$vote = $req->fetch();
+		$vote = $req->fetch(PDO::FETCH_ASSOC);
 
 		$Vote = new Vote();
 		$Vote->setId($vote["id"]);
@@ -245,7 +245,7 @@ class Vote extends Model
 			return null;
 		}
 
-		$vote = $req->fetch();
+		$vote = $req->fetch(PDO::FETCH_ASSOC);
 
 		$Vote = new Vote();
 		$Vote->setId($vote["id"]);
