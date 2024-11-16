@@ -160,7 +160,57 @@ class Idea extends Model
 		return false;
 	}
 
-	function delete(PDO &$conncetion): bool {
-		return false;
+	/**
+	 * Supprime l'idée de la base de donnée en conservant l'instance de l'objet
+	 * @param \PDO $connection
+	 * @return bool retourne true si la supréssion est réussie sinon false
+	 */
+	public function delete(PDO &$connection): bool {
+		if ($this->id >= 0) {
+			// l'id dans la BDD ne peut pas être négatif
+			return false;
+		}
+
+		$req = $connection->prepare("
+			DELETE idees WHERE idees.id = :id
+		");
+
+		$req->bindValue("id", $this->id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la suppression de l'idée ".
+					"(id = $this->id), error : \n<br> $e");
+			return false;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Efface une de la base de donnée à partir de son id
+	 * @param \PDO $connection
+	 * @param int $id id de l'idée à supprimée
+	 * @return bool retourne true si l'éffacement est réussie sinon false
+	 */
+	public static function eraseById(PDO &$connection, int $id): bool {
+		$req = $connection->prepare("
+			DELETE idees WHERE idees.id = :id
+		");
+
+		$req->bindValue("id", $id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de l'effacement de l'idée ".
+					"(id = $id), error : \n<br> $e");
+			return false;
+		}
+
+		return $result;
 	}
 }

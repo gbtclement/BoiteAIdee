@@ -135,6 +135,7 @@ class User extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete (name = $name), error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -160,7 +161,57 @@ class User extends Model
 		return false;
 	}
 
+	/**
+	 * Supprime l'utilisateur de la base de donnée en conservant l'instance de l'objet
+	 * @param \PDO $connection
+	 * @return bool retourne true si la supréssion est réussie sinon false
+	 */
 	public function delete(PDO &$connection): bool {
-		return false;
+		if ($this->id >= 0) {
+			// l'id dans la BDD ne peut pas être négatif
+			return false;
+		}
+
+		$req = $connection->prepare("
+			DELETE utilisateurs WHERE utilisateurs.id = :id
+		");
+
+		$req->bindValue("id", $this->id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la suppression de l'utilisateur ".
+					"(id = $this->id), error : \n<br> $e");
+			return false;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Efface un utilisateur de la base de donnée à partir de son id
+	 * @param \PDO $connection
+	 * @param int $id id de l'utilisateur à éffacé
+	 * @return bool retourne true si l'éffacement est réussi sinon false
+	 */
+	public static function eraseById(PDO &$connection, int $id): bool {
+		$req = $connection->prepare("
+			DELETE utilisateurs WHERE utilisateurs.id = :id
+		");
+
+		$req->bindValue("id", $id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de l'effacement de l'utilisateur ".
+					"(id = $id), error : \n<br> $e");
+			return false;
+		}
+
+		return $result;
 	}
 }
