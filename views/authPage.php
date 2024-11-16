@@ -3,6 +3,7 @@
 //include '../utils/db_connection.php';
 use Models\User;
 use Utils\DbConnection;
+use Utils\SessionHelper;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	// si le formulaire est entré
@@ -65,7 +66,7 @@ function processForm(): bool {
 			return false;
 		}
 		
-		logIn($connection, $signIn);
+		SessionHelper::logIn($connection, $signIn);
 
 	} elseif (isset($_POST["createAccount"])) {
 		// vérifit le formulaire de creation de compte
@@ -76,57 +77,10 @@ function processForm(): bool {
 			return false;
 		}
 
-		signUp($connection, $signUp);
+		SessionHelper::signUp($connection, $signUp);
 	}
 	
 	$db->disconnect();
-	return true;
-}
-
-
-/**
- * Connecte l'utilisateur
- * @param PDO $connection
- * @param string $name le nom de l'utilisateur
- * @return bool retourne true si l'utilisateur est connecté sinon false
- */
-function logIn(PDO &$connection, string $name): bool {
-	$User = User::getByName($connection, $name);
-
-	if (!$User) {
-		echo "<p>Aucun utilisateur trouvé.</p>";
-		return false;
-	}
-
-	session_start();
-
-	$_SESSION["User"] = [
-		"id" => $User->getId(),
-		"user" => $User->getName()
-	];
-
-	return true;
-}
-
-
-/**
- * Créer le compte de l'utilisateur
- * @param PDO $connection
- * @param string $name le nom de l'utilisateur
- * @return bool retourne true si l'utilisateur est créé sinon false
- */
-function signUp(PDO &$connection, string $name): bool {
-	if (User::getByName($connection, $name)) {
-		echo "<p>Utilisateur existe déjà !</p>";
-		return false;
-	}
-
-	if (!User::create($connection, $name)) {
-		echo "<p>Erreur lors de la création de l'utilisateur.</p>";
-		return false;
-	}
-
-	echo "<p>Utilisateur créé avec succès !</p>";
 	return true;
 }
 
