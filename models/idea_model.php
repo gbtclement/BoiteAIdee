@@ -7,28 +7,28 @@ use PDOException;
 class Idea extends Model
 {
 	const TABLE_NAME = "idees";
-	private $user_id;
-	private $User;
-	private $title;
-	private $description;
-	private $creation_date;
+	private int $user_id;
+	private User $User;
+	private string $title;
+	private string $description;
+	private string $creation_date;
 
 	public function getId(): int {
 		return $this->id;
 	}
-	public function getUtilisateur_id(int $user_id): int {
+	public function getUserId(): int {
 		return $this->user_id;
 	}
-	public function getUtilisateur(User $User): int {
+	public function getUser(): User {
 		return $this->User;
 	}
-	public function getTitre(): string {
+	public function getTitle(): string {
 		return $this->title;
 	}
 	public function getDescription(): string {
 		return $this->description;
 	}
-	public function getDateCreation(): string {
+	public function getCreationDate(): string {
 		return $this->creation_date;
 	}
 	
@@ -36,19 +36,19 @@ class Idea extends Model
 	public function setId(int $id): void {
 		$this->id = $id;
 	}
-	public function setUtilisateur_id(int $user_id): void {
+	public function setUser_id(int $user_id): void {
 		$this->user_id = $user_id;
 	}
-	public function setUtilisateur($User): void {
+	public function setUser(User $User): void {
 		$this->User = $User;
 	}
-	public function setTitre(string $title): void {
+	public function setTitle(string $title): void {
 		$this->title = $title;
 	}
 	public function setDescription(string $description): void {
 		$this->description = $description;
 	}
-	public function setDateCreation(string $creation_date): void {
+	public function setCreationDate(string $creation_date): void {
 		$this->creation_date = $creation_date;
 	}
 
@@ -63,6 +63,7 @@ class Idea extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -75,10 +76,10 @@ class Idea extends Model
 		foreach ($req->fetchAll() as $idee) {
 			$Idea = new Idea();
 			$Idea->setId($idee["id"]);
-			$Idea->setUtilisateur_id($idee["user_id"]);
-			$Idea->setTitre($idee["title"]);
+			$Idea->setUser_id($idee["user_id"]);
+			$Idea->setTitle($idee["title"]);
 			$Idea->setDescription($idee["description"]);
-			$Idea->setDateCreation($idee["creation_date"]);
+			$Idea->setCreationDate($idee["creation_date"]);
 			array_push($ideas, $Idea);
 		}
 
@@ -97,6 +98,7 @@ class Idea extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -108,10 +110,10 @@ class Idea extends Model
 
 		$Idea = new Idea();
 		$Idea->setId($idea["id"]);
-		$Idea->setUtilisateur_id($idea["user_id"]);
-		$Idea->setTitre($idea["title"]);
+		$Idea->setUser_id($idea["user_id"]);
+		$Idea->setTitle($idea["title"]);
 		$Idea->setDescription($idea["description"]);
-		$Idea->setDateCreation($idea["creation_date"]);
+		$Idea->setCreationDate($idea["creation_date"]);
 		return $Idea;
 	}
 
@@ -135,6 +137,7 @@ class Idea extends Model
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete (user_id = $user_id,
 			description = $description, title = $title), error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -152,8 +155,38 @@ class Idea extends Model
 		return Idea::getById($connection, $id);
 	}
 
-	function insert(PDO &$conncetion): bool {
-		return false;
+	function insert(PDO &$connection): bool {
+
+		$req = $connection->prepare("
+			INSERT INTO idees (utilisateur_id, titre, description) VALUES (:user_id, :title, :description)");
+
+		$req->bindValue("user_id", $this->getUserId(), PDO::PARAM_INT);
+		$req->bindValue("title", $this->getTitle(), PDO::PARAM_STR);
+		$req->bindValue("description", $this->getDescription(), PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(user_id = ".$this->getUserId().",description = ".$this->getDescription().
+					", title = ".$this->getTitle()."), error : \n<br> $e");
+			return false;
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$id = $connection->lastInsertId();
+
+		if ($id == false) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		return true;
 	}
 
 	function update(PDO &$conncetion): bool {
@@ -182,7 +215,7 @@ class Idea extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la suppression de l'idée ".
-					"(id = $this->id), error : \n<br> $e");
+					"(id = ".$this->getId()."), error : \n<br> $e");
 			return false;
 		}
 

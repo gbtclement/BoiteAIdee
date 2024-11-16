@@ -30,8 +30,6 @@ class User extends Model
 	}
 
 
-
-
 	static function getAll(PDO &$connection) : array|null {
 		$req = $connection->prepare("
 			SELECT * FROM utilisateurs
@@ -42,6 +40,7 @@ class User extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -73,6 +72,7 @@ class User extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -101,6 +101,7 @@ class User extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -134,7 +135,8 @@ class User extends Model
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
-			echo htmlentities("une erreur est arrivée lors de la requete (name = $name), error : \n<br> $e");
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(name = $name), error : \n<br> $e");
 			return null;
 		}
 
@@ -154,7 +156,36 @@ class User extends Model
 	}
 
 	public function insert(PDO &$connection): bool {
-		return false;
+		$req = $connection->prepare("
+			INSERT INTO utilisateurs (nom) VALUES (:name)
+		");
+
+		$req->bindValue("name", $this->getName(), PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(name = ".$this->getName()."), error : \n<br> $e");
+			return false;
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$id = $connection->lastInsertId();
+
+		if ($id == false) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$this->setId($id);
+		
+		return true;
 	}
 
 	public function update(PDO &$connection): bool {
@@ -176,14 +207,14 @@ class User extends Model
 			DELETE utilisateurs WHERE utilisateurs.id = :id
 		");
 
-		$req->bindValue("id", $this->id, PDO::PARAM_INT);
+		$req->bindValue("id", $this->getId(), PDO::PARAM_INT);
 
 		$result = false;
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la suppression de l'utilisateur ".
-					"(id = $this->id), error : \n<br> $e");
+					"(id = ".$this->getId()."), error : \n<br> $e");
 			return false;
 		}
 
