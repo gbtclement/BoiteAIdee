@@ -92,6 +92,7 @@ class Vote extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -132,6 +133,7 @@ class Vote extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -163,6 +165,7 @@ class Vote extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -197,6 +200,7 @@ class Vote extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -231,8 +235,9 @@ class Vote extends Model
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
-			echo htmlentities("une erreur est arrivée lors de la requete 
-			(user_id = $user_id, idea_id = $idea_id), error : \n<br> $e");
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(user_id = $user_id, idea_id = $idea_id), error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -265,15 +270,16 @@ class Vote extends Model
 			INSERT INTO votes (utilisateur_id, idee_id, vote) VALUES (:user_id, :idea_id, :vote)
 		");
 
-		$req->bindValue("user_id", $user_id, PDO::PARAM_STR);
-		$req->bindValue("idea_id", $idea_id, PDO::PARAM_STR);
+		$req->bindValue("user_id", $user_id, PDO::PARAM_INT);
+		$req->bindValue("idea_id", $idea_id, PDO::PARAM_INT);
 		$req->bindValue("vote", $vote, PDO::PARAM_STR);
 		$result = false;
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
-			echo htmlentities("une erreur est arrivée lors de la requete 
-			(user_id = $user_id, idea_id = $idea_id, vote = $vote), error : \n<br> $e");
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(user_id = $user_id, idea_id = $idea_id, vote = $vote), error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -292,7 +298,39 @@ class Vote extends Model
 	}
 
 	public function insert(PDO &$connection): bool {
-		return false;
+		$req = $connection->prepare("
+			INSERT INTO votes (utilisateur_id, idee_id, vote) VALUES (:user_id, :idea_id, :vote)
+		");
+
+		$req->bindValue("user_id", $this->user_id, PDO::PARAM_INT);
+		$req->bindValue("idea_id", $this->idea_id, PDO::PARAM_INT);
+		$req->bindValue("vote", $this->vote, PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(user_id = ".$this->getUserId().", idea_id = ".$this->getIdeaId().
+					", vote = ".$this->getVote()."), error : \n<br> $e");
+			return false;
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$id = $connection->lastInsertId();
+
+		if ($id == false) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$this->setId($id);
+
+		return true;
 	}
 
 	public function update(PDO &$connection): bool {
@@ -321,7 +359,7 @@ class Vote extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la suppression de l'utilisateur ".
-					"(id = $this->id), error : \n<br> $e");
+					"(id = ".$this->getId()."), error : \n<br> $e");
 			return false;
 		}
 
