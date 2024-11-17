@@ -2,7 +2,7 @@
 
 namespace Models;
 
-require_once 'model.php';
+require_once "model.php";
 
 use PDO;
 use PDOException;
@@ -74,19 +74,25 @@ class Idea extends Model
 			return null;
 		}
 
-		$ideas = [];
+		$Ideas = [];
+		
+		$ideas = $req->fetchAll(PDO::FETCH_ASSOC);
 
-		foreach ($req->fetchAll() as $idee) {
+		if ($ideas === false) {
+			return null;
+		}
+
+		foreach ($ideas as $idee) {
 			$Idea = new Idea();
 			$Idea->setId($idee["id"]);
-			$Idea->setUser_id($idee["user_id"]);
+			$Idea->setUser_id($idee["utilisateur_id"]);
 			$Idea->setTitle($idee["title"]);
 			$Idea->setDescription($idee["description"]);
 			$Idea->setCreationDate($idee["creation_date"]);
-			array_push($ideas, $Idea);
+			array_push($Ideas, $Idea);
 		}
 
-		return $ideas;
+		return $Ideas;
 	}
 
 	static function getById(PDO &$connection, int $id): Idea|null {
@@ -110,10 +116,14 @@ class Idea extends Model
 		}
 
 		$idea = $req->fetch(PDO::FETCH_ASSOC);
+		
+		if ($idea === false) {
+			return null;
+		}
 
 		$Idea = new Idea();
 		$Idea->setId($idea["id"]);
-		$Idea->setUser_id($idea["user_id"]);
+		$Idea->setUser_id($idea["utilisateur_id"]);
 		$Idea->setTitle($idea["title"]);
 		$Idea->setDescription($idea["description"]);
 		$Idea->setCreationDate($idea["creation_date"]);
@@ -161,7 +171,8 @@ class Idea extends Model
 	function insert(PDO &$connection): bool {
 
 		$req = $connection->prepare("
-			INSERT INTO idees (utilisateur_id, titre, description) VALUES (:user_id, :title, :description)");
+			INSERT INTO idees (utilisateur_id, titre, description) VALUES (:user_id, :title, :description)"
+		);
 
 		$req->bindValue("user_id", $this->getUserId(), PDO::PARAM_INT);
 		$req->bindValue("title", $this->getTitle(), PDO::PARAM_STR);

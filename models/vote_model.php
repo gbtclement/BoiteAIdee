@@ -2,6 +2,10 @@
 
 namespace Models;
 
+require_once "model.php";
+require_once "user_model.php";
+require_once "idea_model.php";
+
 use PDO;
 use PDOException;
 
@@ -100,19 +104,25 @@ class Vote extends Model
 			return null;
 		}
 
-		$votes = [];
+		$Votes = [];
+		
+		$votes = $req->fetchAll(PDO::FETCH_ASSOC);
 
-		foreach ($req->fetchAll() as $vote) {
+		if ($votes === false) {
+			return null;
+		}
+
+		foreach ($votes as $vote) {
 			$Vote = new Vote();
 			$Vote->setId($vote["id"]);
 			$Vote->setUserId($vote["utilisateur_id"]);
 			$Vote->setIdeaId($vote["idee_id"]);
 			$Vote->setVote($vote["vote"]);
 			$Vote->setDateVote($vote["date_creation"]);
-			array_push($votes, $Vote);
+			array_push($Votes, $Vote);
 		}
 
-		return $votes;
+		return $Votes;
 	}
 
 	/**
@@ -142,6 +152,10 @@ class Vote extends Model
 		}
 
 		$vote = $req->fetch(PDO::FETCH_ASSOC);
+		
+		if ($vote === false) {
+			return null;
+		}
 
 		$Vote = new Vote();
 		$Vote->setId($vote["id"]);
@@ -246,6 +260,10 @@ class Vote extends Model
 		}
 
 		$vote = $req->fetch(PDO::FETCH_ASSOC);
+		
+		if ($vote === false) {
+			return null;
+		}
 
 		$Vote = new Vote();
 		$Vote->setId($vote["id"]);
