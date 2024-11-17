@@ -2,8 +2,10 @@
 
 namespace Utils;
 
-use PDO;
-use Models\User;
+require_once "../models/user_model.php";
+
+use \PDO;
+use \Models\User;
 
 class SessionHelper
 {
@@ -40,7 +42,7 @@ class SessionHelper
          * @return bool retourne true si l'utilisateur est créé sinon false
          */
         public static function signUp(PDO &$connection, string $name): bool {
-                if (User::getByName($connection, $name)) {
+                if (User::getByName($connection, $name) != null) {
                         echo "<p>Utilisateur existe déjà !</p>";
                         return false;
                 }

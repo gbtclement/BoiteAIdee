@@ -2,6 +2,10 @@
 
 namespace Models;
 
+require_once "model.php";
+require_once "user_model.php";
+require_once "idea_model.php";
+
 use PDO;
 use PDOException;
 

@@ -1,4 +1,5 @@
 <?php
+namespace Views;
 
 require_once '../utils/db_connection.php';
 require_once '../utils/session_helper.php';

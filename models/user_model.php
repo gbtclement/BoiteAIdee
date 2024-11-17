@@ -2,6 +2,8 @@
 
 namespace Models;
 
+require_once "model.php";
+
 use PDO;
 use PDOException;
 
@@ -53,7 +55,7 @@ class User extends Model
 		foreach ($req->fetchAll() as $utilisateur) {
 			$User = new User();
 			$User->setId($utilisateur["id"]);
-			$User->setName($utilisateur["name"]);
+			$User->setName($utilisateur["nom"]);
 			array_push($users, $User);
 		}
 
@@ -84,14 +86,14 @@ class User extends Model
 
 		$User = new User();
 		$User->setId($user["id"]);
-		$User->setName($user["name"]);
+		$User->setName($user["nom"]);
 
 		return $User;
 	}
 
 	static function getByName(PDO &$connection, string $name): User|null {
 		$req = $connection->prepare("
-			SELECT * FROM utilisateurs WHERE utilisateurs.name = :name
+			SELECT * FROM utilisateurs WHERE utilisateurs.nom = :name
 		");
 
 		$req->bindValue("name", $name, PDO::PARAM_STR);
@@ -105,15 +107,20 @@ class User extends Model
 		}
 
 		if (!$result) {
-			echo htmlentities("la requete à échouée");
+			echo htmlentities("la requete \"getByName\" à échouée");
 			return null;
 		}
 
 		$user = $req->fetch(PDO::FETCH_ASSOC);
 
+		if ($user === false) {
+			echo htmlentities("la requete à échouée, impossible de fetch (name = $name)");
+			return null;
+		}
+
 		$User = new User();
 		$User->setId($user["id"]);
-		$User->setName($user["name"]);
+		$User->setName($user["nom"]);
 
 		return $User;
 	}
