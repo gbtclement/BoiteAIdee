@@ -1,6 +1,6 @@
 <?php
 
-//include '../utils/db_connection.php';
+require_once '../utils/db_connection.php';
 use Models\User;
 use Utils\DbConnection;
 
