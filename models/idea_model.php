@@ -1,6 +1,9 @@
 <?php
 
 namespace Models;
+
+require_once 'model.php';
+
 use PDO;
 use PDOException;
 

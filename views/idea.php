@@ -1,5 +1,8 @@
 <?php
 
+require_once '../utils/db_Connection.php';
+require_once '../models/idea_model.php';
+
 use Models\Idea;
 use Utils\DbConnection;
 
