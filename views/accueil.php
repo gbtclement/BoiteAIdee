@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('header.php');
-include('../utils/db_connection_test_clement.php');
+include('../utils/db_connection.php');
 
 use Utils\DbConnection;
 
@@ -15,7 +15,7 @@ if ($db->connect()) {
         // Vérifier si l'utilisateur est connecté
         if (!isset($_SESSION['user_id'])) {
             // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
-            header('Location: connexion.php');
+            header('Location: authPage.php');
             exit();
         }
 
