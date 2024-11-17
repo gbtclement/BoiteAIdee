@@ -7,7 +7,7 @@ use Utils\DbConnection;
 
 echo "<div class='accueil'>";
 
-// Vérifier si l'utilisateur est connecté
+    $db = new DbConnection();
 if (isset($_SESSION["user"]["id"])) {
 	// Récupérer le nom de l'utilisateur connecté
 	$utilisateur_id = $_SESSION["user"]["id"];
@@ -45,6 +45,56 @@ if (isset($_SESSION["user"]["id"])) {
 
 		echo "<h1>Liste des idées</h1>";
 
+        $stmt = $db->getConnection()->prepare("
+            SELECT idees.id, idees.titre, idees.description, utilisateurs.nom 
+            FROM idees
+            JOIN utilisateurs ON idees.utilisateur_id = utilisateurs.id
+        ");
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!empty($result)) {
+            echo "<ul>";
+            foreach ($result as $row) {
+                $idee_id = $row['id'];
+
+                $upvotesStmt = $db->getConnection()->prepare("SELECT COUNT(*) FROM votes WHERE idee_id = ? AND vote = 1");
+                $upvotesStmt->execute([$idee_id]);
+                $upvotes = $upvotesStmt->fetchColumn();
+
+                $downvotesStmt = $db->getConnection()->prepare("SELECT COUNT(*) FROM votes WHERE idee_id = ? AND vote = 0");
+                $downvotesStmt->execute([$idee_id]);
+                $downvotes = $downvotesStmt->fetchColumn();
+
+                $userVoteStmt = $db->getConnection()->prepare("SELECT vote FROM votes WHERE idee_id = ? AND utilisateur_id = ?");
+                $userVoteStmt->execute([$idee_id, $utilisateur_id]);
+                $userVote = $userVoteStmt->fetch(PDO::FETCH_ASSOC);
+
+                $voteStatus = $userVote ? "vote effectué" : "vote disponible";
+
+                echo "<div class='idea'>";
+                echo "<p class='vote_status'>" . $voteStatus . "</p>";
+                echo "<li>";
+                echo "<strong>" . htmlspecialchars($row['titre']) . "</strong><br>";
+                echo htmlspecialchars($row['description']) . "<br>";
+                echo "<em>Proposé par : " . htmlspecialchars($row['nom']) . "</em>";
+                echo "</li>";
+
+?>
+                <div class="form_thumbs">
+                    <form method="POST">
+                        <input type="hidden" name="idee_id" value="<?php echo $idee_id; ?>">
+                        <div class="upblock">
+                            <button type="submit" name="vote" value="1" class="up"><i></i></button>
+                            <span class="vote_count"><?php echo $upvotes; ?></span>
+                        </div>
+                        <div class="downblock">
+                            <button type="submit" name="vote" value="0" class="down"><i></i></button>
+                            <span class="vote_count"><?php echo $downvotes; ?></span>
+                        </div>
+                    </form>
+                </div>
+<?php
 		// Préparer et exécuter la requête pour obtenir les idées avec les noms des utilisateurs
 		$stmt = $db->getConnection()->prepare("
 			SELECT idees.id, idees.titre, idees.description, utilisateurs.nom 
@@ -84,6 +134,10 @@ if (isset($_SESSION["user"]["id"])) {
 			echo "<p>Aucune idée trouvée.</p>";
 		}
 
+        $db->disconnect();
+    } else {
+        echo "<p>Erreur de connexion à la base de données.</p>";
+    }
 		// Déconnexion
 		$db->disconnect();
 	} else {
@@ -94,5 +148,8 @@ if (isset($_SESSION["user"]["id"])) {
 }
 
 echo "</div>";
+include('footer.php');
+?>
+
 include 'footer.php';
 ?>
