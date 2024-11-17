@@ -1,6 +1,4 @@
-<?php 
-    include 'header.php';
-?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -10,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <title>Authentification</title>
 </head>
-
 <body>
     <div class="form-container">
     <form method="POST">
@@ -35,6 +32,7 @@
             background-color: #fbfbfb;
             position: absolute;
             left: 0%;
+            top: 20%;
             justify-content: end;
             font-family: 'Roboto', sans-serif;
             
@@ -110,67 +108,53 @@
     <?php
 
 
-        include('../utils/db_connection.php');
+include('../utils/db_connection.php');
+use Utils\DbConnection;
 
-        use Utils\DbConnection;
-        
-        $db = new DbConnection();
-        if ($db->connect()) {
-            // Gestion de la connexion
-            if (isset($_POST["login"])) {
-                $username = trim($_POST["signIn"]);
-                $stmt = $db->getConnection()->prepare("SELECT id, nom FROM utilisateurs WHERE nom = :signIn");
-                $stmt->bindParam(':signIn', $username, PDO::PARAM_STR);
-                $stmt->execute();
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-                if ($result) {
-                    // Stocker l'utilisateur dans la session
-                    $_SESSION['user_id'] = $result['id'];
-                    $_SESSION['username'] = $result['nom'];
-                    header("Location: accueil.php");
-                    exit();
-                } else {
-                    echo "<p>Aucun utilisateur trouvé.</p>";
-                }
+$db = new DbConnection();
+if ($db->connect()) {
+    if (isset($_POST["login"])) {
+        $username = $_POST["signIn"];
+        $stmt = $db->getConnection()->prepare("SELECT nom FROM utilisateurs WHERE nom = :signIn");
+        $stmt->bindParam(':signIn', $username, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        if (!empty($result)) {
+            header("Location: accueil.php");  
+        } else {
+            echo "<p>Aucun utilisateur trouvée.</p>";
+        }
+    }
+    if (isset($_POST["createAccount"])) {
+        $CreateUser = trim($_POST["signUp"]);
+        if (empty($CreateUser)) {
+            echo "<p>Le champ ne peut pas être vide.</p>";
+        } else {
+        $stmt = $db->getConnection()->prepare("SELECT nom FROM utilisateurs WHERE nom = :signUp");
+        $stmt->bindParam(':signUp', $CreateUser, PDO::PARAM_STR);
+        $stmt->execute();
+        $userExists = $stmt->fetch(PDO::FETCH_ASSOC);
+        if($userExists) {
+            echo "<p>Utilisateur existe déjà !</p>";
+        }else {
+            $stmt = $db->getConnection()->prepare("INSERT INTO utilisateurs (nom) VALUES (:signUp)");
+            $stmt->bindParam(':signUp', $CreateUser, PDO::PARAM_STR);
+            if ($stmt->execute()) {
+                echo "<p>Utilisateur créé avec succès !</p>";
+            } else {
+                echo "<p>Erreur lors de la création de l'utilisateur.</p>";
             }
-
-            // Gestion de la création de compte
-            if (isset($_POST["createAccount"])) {
-                $CreateUser = trim($_POST["signUp"]);
-
-                if (empty($CreateUser)) {
-                    echo "<p>Le champ ne peut pas être vide.</p>";
-                } else {
-                    $stmt = $db->getConnection()->prepare("SELECT nom FROM utilisateurs WHERE nom = :signUp");
-                    $stmt->bindParam(':signUp', $CreateUser, PDO::PARAM_STR);
-                    $stmt->execute();
-                    $userExists = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    if ($userExists) {
-                        echo "<p>Utilisateur existe déjà !</p>";
-                    } else {
-                        $stmt = $db->getConnection()->prepare("INSERT INTO utilisateurs (nom) VALUES (:signUp)");
-                        $stmt->bindParam(':signUp', $CreateUser, PDO::PARAM_STR);
-                        if ($stmt->execute()) {
-                            echo "<p>Utilisateur créé avec succès !</p>";
-                        } else {
-                            echo "<p>Erreur lors de la création de l'utilisateur.</p>";
-                        }
-                    }
-                }
-            }
-
-            $db->disconnect();
+        }
+    }
+}
+$db->disconnect();
         } else {
             echo "<p>Erreur de connexion à la base de données.</p>";
         }
     ?>
 
-    
-<?php 
-    include('footer.php'); 
-?>
+
 
 
 
