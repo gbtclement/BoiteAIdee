@@ -33,7 +33,6 @@
         body {
             background-color: #fbfbfb;
             position: absolute;
-            top: 20%;
             left: 0%;
             justify-content: end;
             font-family: 'Roboto', sans-serif;
