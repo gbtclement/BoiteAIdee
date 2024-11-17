@@ -1,4 +1,16 @@
+<?php
 
+require_once '../utils/db_connection.php';
+require_once '../utils/session_helper.php';
+
+use Utils\DbConnection;
+use Utils\SessionHelper;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	processForm();
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -108,51 +120,45 @@
 	<?php
 
 
-include('../utils/db_connection.php');
-use Utils\DbConnection;
 
-$db = new DbConnection();
-if ($db->connect()) {
-	if (isset($_POST["login"])) {
-		$username = $_POST["signIn"];
-		$stmt = $db->getConnection()->prepare("SELECT nom FROM utilisateurs WHERE nom = :signIn");
-		$stmt->bindParam(':signIn', $username, PDO::PARAM_STR);
-		$stmt->execute();
-		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+function processForm() {
+	$db = new DbConnection();
+	$db->connect();
+	$connection = $db->getConnection();
+
+	if (!$db->isConnected()) {
+		echo "<p>Erreur de connexion à la base de données.</p>";
+	}
 	
-		if (!empty($result)) {
+	if (isset($_POST["login"])) {
+		$username = filter_input(INPUT_POST, $_POST["signIn"]);
+		
+		if (SessionHelper::logIn($connection, $username)) {
 			header("Location: accueil.php");  
 		} else {
 			echo "<p>Aucun utilisateur trouvée.</p>";
 		}
 	}
-	if (isset($_POST["createAccount"])) {
-		$CreateUser = trim($_POST["signUp"]);
-		if (empty($CreateUser)) {
+	
+	elseif (isset($_POST["createAccount"])) {
+		$username = filter_input(INPUT_POST, $_POST["signUp"]);
+
+		if ($username === null or $username === false) {
 			echo "<p>Le champ ne peut pas être vide.</p>";
+		}
+
+		if (SessionHelper::signUp($connection, $username)) {
+			echo "<p>Utilisateur créé avec succès !</p>";
 		} else {
-		$stmt = $db->getConnection()->prepare("SELECT nom FROM utilisateurs WHERE nom = :signUp");
-		$stmt->bindParam(':signUp', $CreateUser, PDO::PARAM_STR);
-		$stmt->execute();
-		$userExists = $stmt->fetch(PDO::FETCH_ASSOC);
-		if($userExists) {
-			echo "<p>Utilisateur existe déjà !</p>";
-		}else {
-			$stmt = $db->getConnection()->prepare("INSERT INTO utilisateurs (nom) VALUES (:signUp)");
-			$stmt->bindParam(':signUp', $CreateUser, PDO::PARAM_STR);
-			if ($stmt->execute()) {
-				echo "<p>Utilisateur créé avec succès !</p>";
-			} else {
-				echo "<p>Erreur lors de la création de l'utilisateur.</p>";
-			}
+			echo "<p>Erreur lors de la création de l'utilisateur.</p>";
 		}
 	}
+	$db->disconnect();
 }
-$db->disconnect();
-		} else {
-			echo "<p>Erreur de connexion à la base de données.</p>";
-		}
-	?>
+
+?>
 
 
 

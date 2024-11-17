@@ -19,7 +19,6 @@ class SessionHelper
 		$User = User::getByName($connection, $name);
 
 		if ($User === null) {
-			echo "<p>Aucun utilisateur trouvé.</p>";
 			return false;
 		}
 
@@ -43,16 +42,13 @@ class SessionHelper
 	 */
 	public static function signUp(PDO &$connection, string $name): bool {
 		if (User::getByName($connection, $name) != null) {
-			echo "<p>Utilisateur existe déjà !</p>";
 			return false;
 		}
 	
 		if (!User::create($connection, $name)) {
-			echo "<p>Erreur lors de la création de l'utilisateur.</p>";
 			return false;
 		}
 	
-		echo "<p>Utilisateur créé avec succès !</p>";
 		return true;
 	}
 
