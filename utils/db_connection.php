@@ -12,7 +12,7 @@ class DbConnection
 	private const DB_PORT = "3308";
 
 	private string $username = "root";
-	private string $password = "root";
+	private string $password = "";
 	
 	private PDO|null $connection = null;
 

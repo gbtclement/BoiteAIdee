@@ -1,45 +1,47 @@
 <?php
+include('header.php');
+include('../utils/db_connection.php');
 
-require_once '../utils/db_Connection.php';
-require_once '../models/idea_model.php';
+$utilisateur_id = $_SESSION["user"]["id"];
 
-use Models\Idea;
-use Utils\DbConnection;
+$db = new \Utils\DbConnection();
+$db->connect();
 
-include 'header.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titre = htmlspecialchars($_POST['titre']);
+    $message = htmlspecialchars($_POST['message']);
 
-$titre = null;
-$message = null;
+    $sql = "INSERT INTO idees (utilisateur_id, titre, description) VALUES (:utilisateur_id, :titre, :description)";
+    $stmt = $db->getConnection()->prepare($sql);
+    $stmt->bindParam(':utilisateur_id', $utilisateur_id);
+    $stmt->bindParam(':titre', $titre);
+    $stmt->bindParam(':description', $message);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$titre = filter_input(INPUT_POST, "titre");
-	$message = filter_input(INPUT_POST, "message");
-
-	$db = new DbConnection();
-	$connection = $db->getConnection();
-	Idea::create($connection, $_SESSION["user"][]"id"], $titre, $message);
-	$db->disconnect();
+    if ($stmt->execute()) {
+        echo "<p>Votre idée a été enregistrée avec succès !</p>";
+    } else {
+        echo "<p>Une erreur est survenue lors de l'enregistrement de votre idée.</p>";
+    }
 }
+
 ?>
+
 <div class="idea">
-	<form action="" method="POST" class="formulaire">
+    <form action="idea.php" method="POST" class="formulaire">
+        <div class="form-group row">
+            <label for="titre">Votre titre: </label>
+            <input type="text" name="titre" id="titre" required />
+        </div>
 
-		<div class="form-group row">
-			<label for="titre">Votre titre: </label>
-			<input type="text" name="titre" id="titre" required />
-		</div>
+        <div class="form-group row">
+            <label for="message">Votre message :</label>
+            <textarea cols="" rows="" name="message" maxlength="65530"></textarea>
+        </div>
 
-		<div class="form-group row">
-			<label for="message">Votre message :</label>
-			<textarea cols="" rows="" name="message" maxlength="65530"></textarea>
-		</div>
-
-		<div class="form-group row">
-			<input type="submit" value="Envoyer !" />
-		</div>
-
-	</form>
-
+        <div class="form-group row">
+            <input type="submit" value="Envoyer !" />
+        </div>
+    </form>
 </div>
 
-<?php include('footer.php'); ?>
+<?php include('footer.php');?>
