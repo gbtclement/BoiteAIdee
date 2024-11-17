@@ -124,39 +124,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 function processForm() {
-	$db = new DbConnection();
-	$db->connect();
-	$connection = $db->getConnection();
+    $db = new DbConnection();
+    $db->connect();
+    $connection = $db->getConnection();
 
-	if (!$db->isConnected()) {
-		echo "<p>Erreur de connexion à la base de données.</p>";
-	}
-	
-	if (isset($_POST["login"])) {
-		$username = filter_input(INPUT_POST, $_POST["signIn"]);
-		
-		if (SessionHelper::logIn($connection, $username)) {
-			header("Location: accueil.php");  
-		} else {
-			echo "<p>Aucun utilisateur trouvée.</p>";
-		}
-	}
-	
-	elseif (isset($_POST["createAccount"])) {
-		$username = filter_input(INPUT_POST, $_POST["signUp"]);
+    if (!$db->isConnected()) {
+        echo "<p>Erreur de connexion à la base de données.</p>";
+        return;
+    }
 
-		if ($username === null or $username === false) {
-			echo "<p>Le champ ne peut pas être vide.</p>";
-		}
+    if (isset($_POST["login"])) {
+        $username = filter_input(INPUT_POST, 'signIn', FILTER_SANITIZE_STRING);
 
-		if (SessionHelper::signUp($connection, $username)) {
-			echo "<p>Utilisateur créé avec succès !</p>";
-		} else {
-			echo "<p>Erreur lors de la création de l'utilisateur.</p>";
-		}
-	}
-	$db->disconnect();
+        if ($username === null || $username === false) {
+            echo "<p>Le champ de connexion est vide ou invalide.</p>";
+        } elseif (SessionHelper::logIn($connection, $username)) {
+            header("Location: accueil.php");
+            exit;
+        } else {
+            echo "<p>Aucun utilisateur trouvé.</p>";
+        }
+    } elseif (isset($_POST["createAccount"])) {
+        $username = filter_input(INPUT_POST, 'signUp', FILTER_SANITIZE_STRING);
+
+        if ($username === null || $username === false) {
+            echo "<p>Le champ d'inscription est vide ou invalide.</p>";
+        } elseif (SessionHelper::signUp($connection, $username)) {
+            echo "<p>Utilisateur créé avec succès !</p>";
+        } else {
+            echo "<p>Erreur lors de la création de l'utilisateur.</p>";
+        }
+    }
+
+    $db->disconnect();
 }
+
 
 ?>
 

@@ -7,8 +7,8 @@ use Utils\DbConnection;
 
 echo "<div class='accueil'>";
 
-if (isset($_SESSION['user_id'])) {
-    $utilisateur_id = $_SESSION['user_id'];
+if (isset($_SESSION["user"]["id"])) {
+    $utilisateur_id = $_SESSION["user"]["id"];
 
     $db = new DbConnection();
     if ($db->connect()) {
