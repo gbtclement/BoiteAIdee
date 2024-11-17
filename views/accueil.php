@@ -8,9 +8,9 @@ use Utils\DbConnection;
 echo "<div class='accueil'>";
 
 // Vérifier si l'utilisateur est connecté
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION["user"]["id"])) {
 	// Récupérer le nom de l'utilisateur connecté
-	$utilisateur_id = $_SESSION['user_id'];
+	$utilisateur_id = $_SESSION["user"]["id"];
 	
 	// Créer une instance de connexion et se connecter
 	$db = new DbConnection();
@@ -30,14 +30,14 @@ if (isset($_SESSION['user_id'])) {
 			// Vérifier si c'est un vote
 			if (isset($_POST['idee_id'], $_POST['vote'])) {
 				// Vérifier si l'utilisateur est connecté
-				if (!isset($_SESSION['user_id'])) {
+				if (!isset($_SESSION["user"]["id"])) {
 					// Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
 					header('Location: authPage.php');
 					exit();
 				}
 
 				// Récupérer l'ID de l'utilisateur connecté
-				$utilisateur_id = $_SESSION['user_id'];
+				$utilisateur_id = $_SESSION["user"]["id"];
 				$idee_id = (int)$_POST['idee_id'];
 				$vote = (int)$_POST['vote']; // 1 pour upvote, 0 pour downvote
 			}
