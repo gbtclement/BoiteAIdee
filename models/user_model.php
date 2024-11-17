@@ -30,8 +30,6 @@ class User extends Model
 	}
 
 
-
-
 	static function getAll(PDO &$connection) : array|null {
 		$req = $connection->prepare("
 			SELECT * FROM utilisateurs
@@ -42,6 +40,7 @@ class User extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -73,6 +72,7 @@ class User extends Model
 			$result = $req->execute();
 		} catch (PDOException $e) {
 			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -80,7 +80,36 @@ class User extends Model
 			return null;
 		}
 
-		$user = $req->fetch();
+		$user = $req->fetch(PDO::FETCH_ASSOC);
+
+		$User = new User();
+		$User->setId($user["id"]);
+		$User->setName($user["name"]);
+
+		return $User;
+	}
+
+	static function getByName(PDO &$connection, string $name): User|null {
+		$req = $connection->prepare("
+			SELECT * FROM utilisateurs WHERE utilisateurs.name = :name
+		");
+
+		$req->bindValue("name", $name, PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete, error : \n<br> $e");
+			return null;
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return null;
+		}
+
+		$user = $req->fetch(PDO::FETCH_ASSOC);
 
 		$User = new User();
 		$User->setId($user["id"]);
@@ -106,7 +135,9 @@ class User extends Model
 		try {
 			$result = $req->execute();
 		} catch (PDOException $e) {
-			echo htmlentities("une erreur est arrivée lors de la requete (name = $name), error : \n<br> $e");
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(name = $name), error : \n<br> $e");
+			return null;
 		}
 
 		if (!$result) {
@@ -125,14 +156,93 @@ class User extends Model
 	}
 
 	public function insert(PDO &$connection): bool {
-		return false;
+		$req = $connection->prepare("
+			INSERT INTO utilisateurs (nom) VALUES (:name)
+		");
+
+		$req->bindValue("name", $this->getName(), PDO::PARAM_STR);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la requete ".
+					"(name = ".$this->getName()."), error : \n<br> $e");
+			return false;
+		}
+
+		if (!$result) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$id = $connection->lastInsertId();
+
+		if ($id == false) {
+			echo htmlentities("la requete à échouée");
+			return false;
+		}
+
+		$this->setId($id);
+		
+		return true;
 	}
 
 	public function update(PDO &$connection): bool {
 		return false;
 	}
 
+	/**
+	 * Supprime l'utilisateur de la base de donnée en conservant l'instance de l'objet
+	 * @param \PDO $connection
+	 * @return bool retourne true si la supréssion est réussie sinon false
+	 */
 	public function delete(PDO &$connection): bool {
-		return false;
+		if ($this->id >= 0) {
+			// l'id dans la BDD ne peut pas être négatif
+			return false;
+		}
+
+		$req = $connection->prepare("
+			DELETE utilisateurs WHERE utilisateurs.id = :id
+		");
+
+		$req->bindValue("id", $this->getId(), PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de la suppression de l'utilisateur ".
+					"(id = ".$this->getId()."), error : \n<br> $e");
+			return false;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Efface un utilisateur de la base de donnée à partir de son id
+	 * @param \PDO $connection
+	 * @param int $id id de l'utilisateur à éffacé
+	 * @return bool retourne true si l'éffacement est réussi sinon false
+	 */
+	public static function eraseById(PDO &$connection, int $id): bool {
+		$req = $connection->prepare("
+			DELETE utilisateurs WHERE utilisateurs.id = :id
+		");
+
+		$req->bindValue("id", $id, PDO::PARAM_INT);
+
+		$result = false;
+		try {
+			$result = $req->execute();
+		} catch (PDOException $e) {
+			echo htmlentities("une erreur est arrivée lors de l'effacement de l'utilisateur ".
+					"(id = $id), error : \n<br> $e");
+			return false;
+		}
+
+		return $result;
 	}
 }
