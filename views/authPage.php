@@ -1,6 +1,4 @@
-<?php 
-session_start(); // Démarre la session
-?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -33,8 +31,8 @@ session_start(); // Démarre la session
         body {
             background-color: #fbfbfb;
             position: absolute;
-            top: 20%;
             left: 0%;
+            top: 20%;
             justify-content: end;
             font-family: 'Roboto', sans-serif;
             
@@ -110,8 +108,8 @@ session_start(); // Démarre la session
     <?php
 
 
-    require_once('../utils/db_connection.php');
-    use Utils\DbConnection;
+include('../utils/db_connection.php');
+use Utils\DbConnection;
 
 $db = new DbConnection();
 if ($db->connect()) {
@@ -151,10 +149,12 @@ if ($db->connect()) {
     }
 }
 $db->disconnect();
-} else {
-    echo "<p>Erreur de connexion à la base de données.</p>";
-}
-?>
+        } else {
+            echo "<p>Erreur de connexion à la base de données.</p>";
+        }
+    ?>
+
+
 
 
 
