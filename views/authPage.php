@@ -1,5 +1,5 @@
 <?php 
-session_start(); // Démarre la session
+    include 'header.php';
 ?>
 
 <!DOCTYPE html>
@@ -166,6 +166,11 @@ session_start(); // Démarre la session
             echo "<p>Erreur de connexion à la base de données.</p>";
         }
     ?>
+
+    
+<?php 
+    include('footer.php'); 
+?>
 
 
 
