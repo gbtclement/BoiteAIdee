@@ -1,7 +1,8 @@
 <?php
 
 require_once '../utils/db_connection.php';
-use Models\User;
+require_once '../utils/session_helper.php';
+
 use Utils\DbConnection;
 use Utils\SessionHelper;
 

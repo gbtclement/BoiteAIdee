@@ -2,7 +2,7 @@
 
 if (!isset($_SESSION["user"]["id"])) {
 	// Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
-	header('Location: authPage.php');
+	header('Location: views/authPage.php');
 	exit();
 }
 
