@@ -44,15 +44,15 @@ body {
     position: relative;
 }
 
-@media (max-width: 1024px){
+@media (max-width: 1024px) {
     .content {
-        margin: 100px 20px;
+        margin: 50px 20px;
     }
 }
 
 /* ----------> header.php <---------- */
 
-header{
+header {
     background-color: #333;
     color: #fff;
     padding: 1.5rem 0;
@@ -68,13 +68,13 @@ header nav a {
     border-bottom: none;
 }
 
-header nav a:hover{
+header nav a:hover {
     border-bottom: 2px solid #fff;
 }
 
 /* ----------> footer.php <---------- */
 
-footer{
+footer {
     background-color: #333;
     color: #fff;
     padding: 1.5rem 0;
@@ -90,19 +90,19 @@ footer p {
 
 /* ----------> accueil.php <---------- */
 
-.accueil .form_thumbs form button{
+.accueil .form_thumbs form button {
     background-color: var(--background-light-gray);
     outline: none;
     border: none;
 }
 
-.accueil .form_thumbs form .down i{
+.accueil .form_thumbs form .down i {
     content: url(uploads/down.svg);
     width: 30px;
     height: auto;
 }
 
-.accueil .form_thumbs form .up i{
+.accueil .form_thumbs form .up i {
     content: url(uploads/up.svg);
     width: 30px;
     height: auto;
@@ -113,16 +113,16 @@ footer p {
     cursor: pointer;
 }
 
-.accueil .form_thumbs form button{
+.accueil .form_thumbs form button {
     margin-top: 15px;
 }
 
-.accueil .form_thumbs form{
+.accueil .form_thumbs form {
     display: flex;
     justify-content: space-between;
 }
 
-.accueil .idea{
+.accueil .idea {
     width: fit-content;
     list-style: none;
     background-color: var(--background-light-gray);
@@ -131,57 +131,70 @@ footer p {
     width: calc((100% - 20px) / 2);
     border: 4px solid;
 }
-.accueil ul{
+
+.accueil ul {
     display: flex;
     justify-content: flex-start;
     gap: 20px;
     flex-wrap: wrap;
 }
 
-.accueil h1{
+.accueil h1 {
     margin-bottom: 50px;
+}
+
+.accueil .username{
+    position: absolute;
+    top: 10px;
+    right: 0;
+}
+
+@media (max-width: 768px) {
+    .accueil .idea {
+        width: 100%;
+    }
 }
 
 /* ----------> idea.php <---------- */
 
-.idea{
+.idea {
     max-width: 1024px;
     justify-self: center;
     width: -webkit-fill-available;
 }
 
-.idea .form-group{
+.idea .form-group {
     display: flex;
     flex-direction: column;
 }
 
 .idea .form-group input,
-.idea .form-group textarea{
+.idea .form-group textarea {
     padding: 1rem;
     border: 4px solid lightgray;
 }
 
 .idea .form-group input:focus,
-.idea .form-group textarea:focus{
+.idea .form-group textarea:focus {
     border: 4px solid #333;
 }
 
-.idea .form-group textarea{
+.idea .form-group textarea {
     resize: vertical;
     width: 100%;
 }
 
-.idea .formulaire{
+.idea .formulaire {
     display: flex;
     gap: 20px;
     flex-direction: column;
 }
 
-.idea form label{
+.idea form label {
     margin-bottom: 5px;
     font-size: var(--h2-size);
 }
 
-.idea form .form-group input[type="submit"]{
+.idea form .form-group input[type="submit"] {
     cursor: pointer;
 }
